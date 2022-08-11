@@ -1,0 +1,17 @@
+FROM python:3.9-buster
+
+RUN apt-get update && apt-get -y install \
+    libpq-dev
+
+WORKDIR /app
+ADD    requirements.txt    /app/
+RUN    pip install -r requirements.txt
+
+ADD    https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh /
+RUN chmod +x /wait-for-it.sh
+
+ENV PYTHONUNBUFFERED 1
+
+RUN adduser --disabled-password --no-create-home app
+
+USER app

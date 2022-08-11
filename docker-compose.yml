@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:14.4
+    volumes:
+      - django_db_volume:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=sampledb
+      - POSTGRES_USER=sampleuser
+      - POSTGRES_PASSWORD=samplesecret
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8
+    ports:
+      - "15432:5432"
+
+  django:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-dev
+    environment:
+      - DJANGO_DEBUG=True
+      - DJANGO_DB_HOST=db
+      - DJANGO_DB_PORT=5432
+      - DJANGO_DB_NAME=sampledb
+      - DJANGO_DB_USERNAME=sampleuser
+      - DJANGO_DB_PASSWORD=samplesecret
+      - DJANGO_SECRET_KEY=dev_secret_key
+    ports:
+      - "8000:8000"
+    command: >
+      bash -c "python manage.py wait_for_db &&
+               python manage.py migrate &&
+               python manage.py runserver 0:8000"
+    volumes:
+      - ./:/app/
+volumes:
+  django_db_volume: {}
