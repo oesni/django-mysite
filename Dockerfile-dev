@@ -15,3 +15,4 @@ ENV PYTHONUNBUFFERED 1
 RUN adduser --disabled-password --no-create-home app
 
 USER app
+RUN chmod +x /wait-for-it.sh
